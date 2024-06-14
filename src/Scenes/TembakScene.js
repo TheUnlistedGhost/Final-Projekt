@@ -1,5 +1,7 @@
 import Phaser from 'phaser'
+import Obstacles from '../ui/Obstacles';
 export default class TembakScene extends
+
 Phaser.Scene
 {
     constructor(){
@@ -9,12 +11,18 @@ Phaser.Scene
         this.player = undefined;
         this.speed = 100;
         this.cursor = undefined;
+        this.enemies = undefined;
+        this.enemySpeed = 50
     }
     preload(){
         this.load.image('background', 'images/bg-preview.png')
         this.load.spritesheet('player', 'images/player.png', {
             frameWidth: 26,
             frameHeight: 21
+        })
+        this.load.spritesheet('enemy', 'images/enemy.png', {
+            frameWidth: 29,
+            frameHeight: 29
         })
     }
     create(){
@@ -23,6 +31,17 @@ Phaser.Scene
         this.add.image(gameWidht,gameHeight,'background').setScale(3)
         this.player = this.createPlayer()
         this.cursor = this.input.keyboard.createCursorKeys()
+        this.enemies = this.physics.add.group({
+            classType: Obstacles,
+            maxSize: 10,
+            runChildUpdate: true
+         })
+         this.time.addEvent({
+            delay: Phaser.Math.Between(1000, 5000),
+            callback: this.spawnEnemy,
+            callbackScope: this,
+            loop: true
+        })
     }
     update(time){
         if (this.cursor.up.isDown){
@@ -68,5 +87,19 @@ Phaser.Scene
             }]
         })
         return player
+    }
+    spawnEnemy() {
+        const config = {
+            speed: 30,
+        }
+        this.anims.create({
+            key;            
+        })
+        // @ts-ignore
+        const enemy = this.enemies.get(820,0,'enemy',config)
+        const positionY = Phaser.Math.Between(50, 350)
+        if (enemy) {
+            enemy.spawn(positionY)
+        }
     }
 }

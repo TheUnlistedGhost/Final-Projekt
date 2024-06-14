@@ -1,25 +1,19 @@
 import Phaser from 'phaser'
 
-import CorronaBusterScene from './Scene/CorronaBusterScene.js'
-import GameOverScene from './Scene/GameOverScene.js'
-import StartScene from './Scene/StartScene.js'
+import TembakScene from './Scenes/TembakScene'
 
 const config = {
 	type: Phaser.AUTO,
 	parent: 'app',
-	width: 400,
-	height: 620,
+	width: 820,
+	height: 400,
 	physics: {
 		default: 'arcade',
 		arcade: {
 			gravity: { y: 0 },
 		},
 	},
-	scene: [StartScene, CorronaBusterScene, GameOverScene],
-	scale: {
-		mode: Phaser.Scale.FIT,
-		autoCenter: Phaser.Scale.CENTER_BOTH
-	}
+	scene: [TembakScene],
 }
 
 export default new Phaser.Game(config)
