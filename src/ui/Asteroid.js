@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-export default class Obstacles extends
+export default class Asteroid extends
 Phaser.Physics.Arcade.Sprite
 {
     constructor(scene, x, y, texture, config){
