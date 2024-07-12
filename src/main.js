@@ -3,6 +3,7 @@ import Phaser from 'phaser'
 import TembakScene from './Scenes/TembakScene'
 import GameOverScene from './Scenes/GameOverScene'
 import StartScene from './Scenes/StartScene'
+import WinScene from './Scenes/WinScene'
 
 const config = {
 	type: Phaser.AUTO,
@@ -15,7 +16,7 @@ const config = {
 			gravity: { y: 0 },
 		},
 	},
-	scene: [StartScene, TembakScene, GameOverScene],
+	scene: [StartScene, TembakScene, GameOverScene, WinScene],
 }
 
 export default new Phaser.Game(config)

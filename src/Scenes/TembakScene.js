@@ -21,6 +21,7 @@ Phaser.Scene
         this.scoreLabel = undefined
         this.life = 3,
         this.lifeLabel = undefined
+        this.backsound = undefined
     }
     preload(){
         this.load.image('background', 'images/bg-preview.png')
@@ -36,6 +37,11 @@ Phaser.Scene
         this.load.image('small', 'images/asteroid-small.png')
         this.load.image('big', 'images/asteroid.png')
         this.load.audio('lasersfx' , 'sfx/laserSound.mp3')
+        this.load.audio('bgsound' , 'sfx/bgsound.mp3')
+        this.load.audio('gameover' , 'sfx/gameover.mp3')
+        this.load.audio('hit' , 'sfx/hit.mp3')
+        this.load.audio('poin' , 'sfx/poin.mp3')
+        this.load.audio('explosion' , 'sfx/explosion.mp3')
     }
     create(){
         const gameWidht = this.scale.width*0.5;
@@ -65,13 +71,13 @@ Phaser.Scene
             loop: true
         })
         this.time.addEvent({
-            delay: Phaser.Math.Between(4100, 4400),
+            delay: Phaser.Math.Between(2100, 4400),
             callback: this.spawnSmalAsteroid,
             callbackScope: this,
             loop: true
         })
         this.time.addEvent({
-            delay: Phaser.Math.Between(7000, 8000),
+            delay: Phaser.Math.Between(5000, 8000),
             callback: this.spawnAsteroid,
             callbackScope: this,
             loop: true
@@ -114,6 +120,26 @@ Phaser.Scene
             null,
             this
         )
+        this.physics.add.overlap(
+            this.player,
+            this.asteroid1,
+            this.decreaseLife,
+            null,
+            this
+        )
+        this.physics.add.overlap(
+            this.player,
+            this.asteroid2,
+            this.decreaseLife,
+            null,
+            this
+        )
+        this.backsound = this.sound.add('bgsound')
+        var soundConfig={
+        loop: true,
+        volume: 0.5,
+        }
+        this.backsound.play(soundConfig)
     }
     update(time){
         this.movePlayer(this.player, time)
@@ -176,7 +202,7 @@ Phaser.Scene
     }
     spawnEnemy() {
         const config = {
-            speed: 30,
+            speed: Phaser.Math.Between(40, 120),
         }
         
         this.anims.create({
@@ -194,11 +220,11 @@ Phaser.Scene
     }
     spawnSmalAsteroid() {
         const config = {
-            speed: 30,
+            speed: Phaser.Math.Between(100, 200),
             rotation: 0.1
         }
         // @ts-ignore
-        const asteroid1 = this.asteroid1.get(0,0,'small',config)
+        const asteroid1 = this.asteroid1.get(0,0,'small',config).setScale(2.5)
         const positionY = Phaser.Math.Between(10, 390)
         if (asteroid1) {
             asteroid1.spawn(positionY)
@@ -206,11 +232,11 @@ Phaser.Scene
     }
     spawnAsteroid() {
         const config = {
-            speed: 30,
-            rotation: 0.1
+            speed: Phaser.Math.Between(30, 120),
+            rotation: 0.1,
         }
         // @ts-ignore
-        const asteroid2 = this.asteroid2.get(0,0,'big',config)
+        const asteroid2 = this.asteroid2.get(0,0,'big',config).setScale(2.8)
         const positionY = Phaser.Math.Between(10, 390)
         if (asteroid2) {
             asteroid2.spawn(positionY)
@@ -219,12 +245,17 @@ Phaser.Scene
     hitEnemy(laser, enemy) {
         laser.die()
         enemy.die()
+        this.sound.play('poin')
         this.score += 10
+        if (this.score == 1000){
+            this.scene.start('win-scene')
+        }
     }
     laserDelete(laser){
         laser.die()
     }
     decreaseLife(player, enemy){
+        this.sound.play('hit')
         enemy.die()
         this.life--
         if (this.life == 2){
@@ -232,6 +263,9 @@ Phaser.Scene
         }else if (this.life == 1){
             player.setTint(0xff0000).setAlpha(0.5)
         }else if (this.life == 0) {
+            this.sound.stopAll()
+            this.sound.play('explosion')
+            this.sound.play('gameover')
             this.scene.start('over-scene',{score:this.score})
         }
     }
